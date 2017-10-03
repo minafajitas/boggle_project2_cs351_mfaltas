@@ -15,6 +15,8 @@ public class Controller extends Application
       launch(args);
     }
 
+    Board newboard = new Board();
+
 
 
   @Override

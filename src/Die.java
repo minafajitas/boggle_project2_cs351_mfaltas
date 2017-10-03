@@ -20,4 +20,9 @@ public class Die
     this.topLetter = letters.charAt(randomInt);
     this.imageString = topLetter + ".png";
   }
+
+  char getTopLetter()
+  {
+    return topLetter;
+  }
 }
