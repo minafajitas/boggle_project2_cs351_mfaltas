@@ -44,7 +44,7 @@ public class Board
     board.add(die14);
     board.add(die15);
 
-    for (Die dice: board)
+    for (Die dice : board)
     {
       dice.rollDie();
     }
@@ -54,17 +54,25 @@ public class Board
   }
 
 
-  boolean findWord (String word, int charInd, int boardInd)
+  boolean findWord(String word, int charInd, int boardInd)
   {
-    if (charInd == word.length()-1)
+    if (charInd == word.length() - 1)
     {
       return true;
     }
+
     if (charInd != 0)
     {
-      if (word.charAt(charInd) == board.get(boardInd + 1).getTopLetter())
+      for (int i = 0; i < directionArray.length; i++)
       {
-        findWord(word, charInd++, boardInd + 1);
+        int newBoardInd = boardInd + directionArray[i];
+        if (newBoardInd <= 15 && newBoardInd >= 0)
+        {
+          if (word.charAt(charInd) == board.get(newBoardInd).getTopLetter())
+          {
+            return findWord(word, charInd++, newBoardInd);
+          }
+        }
       }
     }
     for (Die dice : board)
@@ -73,13 +81,17 @@ public class Board
       {
         boardInd = board.indexOf(dice);
         findWord(word, charInd++, boardInd);
-      }
-      else
+      } else
       {
         break;
       }
     }
     return false;
+  }
+
+  ArrayList<Die> getBoard()
+  {
+    return board;
   }
 
 
