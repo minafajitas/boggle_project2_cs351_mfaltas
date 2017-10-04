@@ -54,40 +54,79 @@ public class Board
   }
 
 
-  boolean findWord(String word, int charInd, int boardInd)
+  boolean findWord (String word, int charInd, int boardInd)
   {
+    System.out.println("function called");
     if (charInd == word.length() - 1)
     {
+      System.out.println("reached end of word\n");
       return true;
     }
-
-    if (charInd != 0)
+    else if (charInd == 0)
     {
-      for (int i = 0; i < directionArray.length; i++)
+      System.out.println("enterd first letter\n");
+      for (Die dice : board)
       {
-        int newBoardInd = boardInd + directionArray[i];
-        if (newBoardInd <= 15 && newBoardInd >= 0)
+        System.out.println("top letter is " + dice.getTopLetter());
+        System.out.println("current char is " + word.charAt(charInd));
+        if (word.charAt(charInd) == dice.getTopLetter())
         {
-          if (word.charAt(charInd) == board.get(newBoardInd).getTopLetter())
-          {
-            return findWord(word, charInd++, newBoardInd);
-          }
+          charInd = 1;
+          return findWord(word, charInd, board.indexOf(dice));
         }
       }
     }
-    for (Die dice : board)
+    else if (charInd > 0)
     {
-      if (word.charAt(charInd) == dice.getTopLetter())
+      System.out.println("enterd second letter\n");
+      int tempBoardInd;
+      for (int i = 0; i < directionArray.length; i++)
       {
-        boardInd = board.indexOf(dice);
-        findWord(word, charInd++, boardInd);
-      } else
-      {
-        break;
+        tempBoardInd = boardInd + directionArray[i];
+        if (word.charAt(charInd) == board.get(tempBoardInd).getTopLetter())
+        {
+          charInd++;
+          return findWord(word, charInd, tempBoardInd);
+        }
       }
     }
     return false;
   }
+
+//  boolean findWord(String word, int charInd, int boardInd)
+//  {
+//    if (charInd == word.length() - 1)
+//    {
+//      return true;
+//    }
+//
+//    if (charInd != 0)
+//    {
+//      for (int i = 0; i < directionArray.length; i++)
+//      {
+//        int newBoardInd = boardInd + directionArray[i];
+//        if (newBoardInd <= 15 && newBoardInd >= 0)
+//        {
+//          if (word.charAt(charInd) == board.get(newBoardInd).getTopLetter())
+//          {
+//            return findWord(word, charInd++, newBoardInd);
+//          }
+//        }
+//      }
+//    }
+//    for (Die dice : board)
+//    {
+//      if (word.charAt(charInd) == dice.getTopLetter())
+//      {
+//        boardInd = board.indexOf(dice);
+//        findWord(word, charInd++, boardInd);
+//      } else
+//      {
+//        break;
+//      }
+//    }
+//    return false;
+//  }
 
   ArrayList<Die> getBoard()
   {

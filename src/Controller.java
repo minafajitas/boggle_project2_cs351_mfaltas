@@ -47,7 +47,7 @@ public class Controller extends Application
     Button enterWord = new Button("enter");
     mainMenu.getChildren().add(boardPane);
     mainMenu.getChildren().addAll(wordField, enterWord);
-    primaryStage.setScene(new Scene(mainMenu, 300, 300));
+    primaryStage.setScene(new Scene(mainMenu, 800, 800));
     primaryStage.show();
 
 
@@ -58,6 +58,7 @@ public class Controller extends Application
       {
         String enteredText;
         enteredText = wordField.getText();
+        System.out.println(newboard.findWord(enteredText, 0, 0));
         System.out.println(newDictionary.inDictionary(enteredText));
       }
     });
