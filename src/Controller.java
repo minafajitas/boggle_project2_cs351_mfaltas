@@ -82,7 +82,8 @@ public class Controller extends Application {
                     if (newboard.findWord(enteredText, 0, 0) && newDictionary.inDictionary(enteredText))
                     {
                         rightNumbers.getChildren().add(newWord);
-                        score++;
+                        score += enteredText.length() - 2;
+                        scoreText.setText("Score: " + score);
                     }
                     else
                     {
