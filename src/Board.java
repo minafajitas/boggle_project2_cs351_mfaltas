@@ -92,7 +92,7 @@ public class Board {
             int tempBoardInd;
             for (int i = 0; i < directionArray.length; i++) {
                 tempBoardInd = boardInd + directionArray[i];
-                if (tempBoardInd > 15 || tempBoardInd < 0) {
+                if (tempBoardInd > 25 || tempBoardInd < 0) {
                     continue;
                 }
                 if (word.charAt(charInd) == board.get(tempBoardInd).getTopLetter()) {
