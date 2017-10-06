@@ -7,22 +7,32 @@ public class Board {
     private final int directionArray[] = {-5, -4, -3, -1, 1, 3, 4, 5};
 
     Board() {
-        Die die0 = new Die(0, "RIFOBX");
-        Die die1 = new Die(1, "IFEHEY");
-        Die die2 = new Die(2, "DENOWS");
-        Die die3 = new Die(3, "UTOKND");
-        Die die4 = new Die(4, "HMSRAO");
-        Die die5 = new Die(5, "LUPETS");
-        Die die6 = new Die(6, "ACITOA");
-        Die die7 = new Die(7, "YLGKUE");
-        Die die8 = new Die(8, "QBMJOA");
-        Die die9 = new Die(9, "EHISPN");
-        Die die10 = new Die(10, "VETIGN");
-        Die die11 = new Die(11, "BALIYT");
-        Die die12 = new Die(12, "EZAVND");
-        Die die13 = new Die(13, "RALESC");
-        Die die14 = new Die(14, "UWILRG");
-        Die die15 = new Die(15, "PACEMD");
+        Die die0 = new Die(0, "AAAFRS");
+        Die die1 = new Die(1, "AAEEEE");
+        Die die2 = new Die(2, "AAFIRS");
+        Die die3 = new Die(3, "ADENNN");
+        Die die4 = new Die(4, "AEEEEM");
+        Die die5 = new Die(5, "AEEGMU");
+        Die die6 = new Die(6, "AEGMNN");
+        Die die7 = new Die(7, "AFIRSY");
+        Die die8 = new Die(8, "BJKQXZ");
+        Die die9 = new Die(9, "CCNSTW");
+        Die die10 = new Die(10, "CEIILT");
+        Die die11 = new Die(11, "CEILPT");
+        Die die12 = new Die(12, "CEIPST");
+        Die die13 = new Die(13, "DHHNOT");
+        Die die14 = new Die(14, "DHHLOR");
+        Die die15 = new Die(15, "DHLNOR");
+        Die die16 = new Die(15, "DDLNOR");
+        Die die17 = new Die(15, "EIIITT");
+        Die die18 = new Die(15, "EMOTTT");
+        Die die19 = new Die(15, "ENSSSU");
+        Die die20 = new Die(15, "FIPRSY");
+        Die die21 = new Die(15, "GORRVW");
+        Die die22 = new Die(15, "HIPRRY");
+        Die die23 = new Die(15, "NOOTUW");
+        Die die24 = new Die(15, "OOOTTU");
+
 
         board = new ArrayList<>();
         board.add(die0);
@@ -41,6 +51,16 @@ public class Board {
         board.add(die13);
         board.add(die14);
         board.add(die15);
+        board.add(die16);
+        board.add(die17);
+        board.add(die18);
+        board.add(die19);
+        board.add(die20);
+        board.add(die21);
+        board.add(die22);
+        board.add(die23);
+        board.add(die24);
+
 
         for (Die dice : board) {
             dice.rollDie();

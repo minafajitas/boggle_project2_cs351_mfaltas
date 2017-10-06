@@ -25,6 +25,11 @@ public class Die {
         return topLetter;
     }
 
+    String getImageText()
+    {
+        return imageText;
+    }
+
     public ImageView getImageView() {
         System.out.println(imageText);
         Image tileImage = new Image(imageText);
