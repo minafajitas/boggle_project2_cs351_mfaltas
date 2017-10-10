@@ -3,14 +3,19 @@ import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
+import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.effect.Light;
 import javafx.scene.layout.*;
+import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
 import javafx.stage.Stage;
+
+import java.awt.*;
 
 
 public class Controller extends Application {
@@ -28,10 +33,19 @@ public class Controller extends Application {
 
     private Text timerText = new Text();
 
+    private boolean drawLine = false;
+
+    Point lastClicked = new Point(0,0);
+
     @Override
     public void start(Stage primaryStage) throws Exception {
         Dictionary newDictionary = new Dictionary();
+
+      Group boardGroup = new Group();
         GridPane boardPane = new GridPane();
+        boardGroup.getChildren().add(boardPane);
+        Group secondBoardGroup = new Group();
+        boardGroup.getChildren().add(secondBoardGroup);
 
         int col = 0;
         int row = 0;
@@ -43,6 +57,21 @@ public class Controller extends Application {
                 @Override
                 public void handle(ActionEvent event) {
                     wordField.setText(wordField.getCharacters() + "" + Dice.getTopLetter());
+
+                    int x = (int) (((Button)(event.getSource())).getLayoutX() + 100);
+                    int y = (int) (((Button)(event.getSource())).getLayoutY() + 100);
+
+                  System.out.println("x is " + x + "y is " + y);
+                    if (drawLine == true)
+                    {
+                      Line arrow = new Line(lastClicked.getX(), lastClicked.getY(), x, y);
+                      secondBoardGroup.getChildren().add(arrow);
+                    }
+                    else
+                    {
+                      drawLine = true;
+                    }
+                    lastClicked.setLocation(x,y);
                 }
             });
             boardPane.add(newLetterButton, col, row);
@@ -79,7 +108,7 @@ public class Controller extends Application {
         topHbox.setAlignment(Pos.CENTER_LEFT);
         scoreText.setFont(Font.font(60));
         Button enterWord = new Button("enter");
-        gameVbox.getChildren().add(boardPane);
+        gameVbox.getChildren().add(boardGroup);
         boardPane.setAlignment(Pos.CENTER);
         gameTextHbox.getChildren().addAll(wordField, enterWord);
         gameVbox.getChildren().add(gameTextHbox);
@@ -101,6 +130,9 @@ public class Controller extends Application {
             public void handle(ActionEvent event) {
                 String enteredText;
                 enteredText = wordField.getText();
+                wordField.setText("");
+                secondBoardGroup.getChildren().clear();
+                drawLine = false;
                 if (!enteredText.equals("")) {
                     Text newWord = new Text(enteredText);
                     newWord.setFont(Font.font(20));
@@ -123,7 +155,7 @@ public class Controller extends Application {
         double conversionFactorFromNanoToSeconds = Math.pow(10, -9);
         double currentTime;
         double startupTime;
-        final private double totalTime = 5;
+        final private double totalTime = 180;
 
         @Override
         public void handle(long now) {
