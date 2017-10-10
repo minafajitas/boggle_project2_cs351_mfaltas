@@ -8,8 +8,8 @@ import javafx.scene.Scene;
 import javafx.scene.control.Button;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
-import javafx.scene.effect.Light;
 import javafx.scene.layout.*;
+import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
@@ -35,6 +35,10 @@ public class Controller extends Application {
 
     private boolean drawLine = false;
 
+    private double timeRemaining;
+
+  private GridPane boardPane = new GridPane();
+
     Point lastClicked = new Point(0,0);
 
     @Override
@@ -56,6 +60,7 @@ public class Controller extends Application {
             newLetterButton.setOnAction(new EventHandler<ActionEvent>() {
                 @Override
                 public void handle(ActionEvent event) {
+                  newLetterButton.setDisable(true);
                     wordField.setText(wordField.getCharacters() + "" + Dice.getTopLetter());
 
                     int x = (int) (((Button)(event.getSource())).getLayoutX() + 100);
@@ -128,6 +133,10 @@ public class Controller extends Application {
         enterWord.setOnAction(new EventHandler<ActionEvent>() {
             @Override
             public void handle(ActionEvent event) {
+              for (int i = 0; i < boardPane.getChildren().size(); i++)
+              {
+                boardPane.getChildren().get(i).setDisable(false);
+              }
                 String enteredText;
                 enteredText = wordField.getText();
                 wordField.setText("");
@@ -155,7 +164,7 @@ public class Controller extends Application {
         double conversionFactorFromNanoToSeconds = Math.pow(10, -9);
         double currentTime;
         double startupTime;
-        final private double totalTime = 180;
+        final private double totalTime = 20;
 
         @Override
         public void handle(long now) {
@@ -165,15 +174,36 @@ public class Controller extends Application {
                 startupTime = now * conversionFactorFromNanoToSeconds;
                 gameStarted = true;
             }
-            double timeRemaining = totalTime - currentTime;
+            timeRemaining = totalTime - currentTime;
             timeRemaining = ((int) (timeRemaining * 10.0)) / 10.0;
 
             timerText.setText("Time Remaining: " + timeRemaining + "         ");
 //      System.out.println(timeRemaining);
+          if (timeRemaining <= 10)
+          {
+            int k = (int) (timeRemaining % 2);
+            if (k == 0)
+            {
+              timerText.setFill(Color.GREEN);
+            }
+            else
+            {
+              timerText.setFill((Color.RED));
+            }
+          }
             if (timeRemaining <= 0) {
                 timerText.setText("Game Over                     ");
                 wordField.setDisable(true);
                 stop();
+
+                BorderPane scorePane = new BorderPane();
+                Text finalScoreText = new Text("Game Over \n" + scoreText.getText());
+                finalScoreText.setFont(Font.font(60));
+                scorePane.setCenter(finalScoreText);
+                Stage scoreStage = new Stage();
+                scoreStage.setScene(new Scene(scorePane,1000,200));
+                scoreStage.show();
+
 //        System.exit(0);
             }
         }
