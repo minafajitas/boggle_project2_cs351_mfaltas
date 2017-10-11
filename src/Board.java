@@ -4,7 +4,10 @@ import java.util.Collections;
 
 public class Board {
     private ArrayList<Die> board;
-    private final int directionArray[] = {-5, -4, -3, -1, 1, 3, 4, 5};
+    //direction array for 4x4
+//    private final int directionArray[] = {-5, -4, -3, -1, 1, 3, 4, 5};
+    //direction array for 5x5
+    private final int directionArray[] = {-6, -5 , -4, -1 , 1, 4, 5, 6};
 
     Board() {
         Die die0 = new Die(0, "AAAFRS");
@@ -82,9 +85,9 @@ public class Board {
             for (Die dice : board) {
                 System.out.println("top letter is " + dice.getTopLetter());
                 System.out.println("current char is " + word.charAt(charInd));
-                if (word.charAt(charInd) == dice.getTopLetter()) {
+                if (word.charAt(0) == dice.getTopLetter()) {
                     charInd = 1;
-                    return findWord(word, charInd, board.indexOf(dice));
+                    if (findWord(word, charInd, board.indexOf(dice))) return true;
                 }
             }
         } else if (charInd > 0) {
@@ -92,7 +95,7 @@ public class Board {
             int tempBoardInd;
             for (int i = 0; i < directionArray.length; i++) {
                 tempBoardInd = boardInd + directionArray[i];
-                if (tempBoardInd > 25 || tempBoardInd < 0) {
+                if (tempBoardInd > 24 || tempBoardInd < 0) {
                     continue;
                 }
                 if (word.charAt(charInd) == board.get(tempBoardInd).getTopLetter()) {
