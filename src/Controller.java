@@ -10,6 +10,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
@@ -48,6 +50,8 @@ public class Controller extends Application
   Point lastClicked = new Point(0, 0);
   boolean fourByFourBoolean = true;
   boolean gameModeSelected = false;
+  boolean egyptianMode = false;
+  gameTimer newTimer;
 
   Board newBoard;
 
@@ -65,15 +69,20 @@ public class Controller extends Application
     VBox mainMenuBox = new VBox();
     Button startGame = new Button("Start Game");
     ComboBox gameMode = new ComboBox();
-    gameMode.getItems().addAll("4x4 mode", "5x5 mode");
+    gameMode.getItems().addAll("4x4 mode", "5x5 mode", "Egyptian Boggle <3");
     gameMode.getSelectionModel().select(0);
+    Image peggyHillImage = new Image("PeggyHillBoggle.png");
+    ImageView peggyHillImageView = new ImageView(peggyHillImage);
+    mainMenuBox.getChildren().add(peggyHillImageView);
     mainMenuBox.getChildren().addAll(startGame, gameMode);
     mainMenuPane.setCenter(mainMenuBox);
     mainMenuBox.setAlignment(Pos.CENTER);
-    primaryStage.setScene(new Scene(mainMenuPane, 400, 500));
+    Scene mainMenuScene = new Scene(mainMenuPane, 400, 500);
+    primaryStage.setScene(mainMenuScene);
     Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
     primaryStage.setX((primScreenBounds.getWidth() - primaryStage.getWidth()) / 2);
     primaryStage.setY((primScreenBounds.getHeight() - primaryStage.getHeight()) / 2);
+    primaryStage.setTitle("Boggle Peggy Hill Hoo Yaaah edition");
     primaryStage.show();
 
 //    System.out.println("four by four is " + fourByFourBoolean);
@@ -141,6 +150,7 @@ public class Controller extends Application
       }
     };
 
+    Scene mainGameScene = new Scene(mainGamePane, 1500, 1000);
     /**
      * The start game sets the flags for the selected game mode. Based on that flag, Buttons are created to with image
      * Views of the dice selected based on the game mode.
@@ -154,9 +164,14 @@ public class Controller extends Application
         if (gameMode.getValue() == "4x4 mode")
         {
           fourByFourBoolean = true;
-        } else
+        } else if (gameMode.getValue() == "5x5 mode")
         {
           fourByFourBoolean = false;
+        }
+        else
+        {
+          fourByFourBoolean = false;
+          egyptianMode = true;
         }
         gameModeSelected = true;
 
@@ -176,7 +191,15 @@ public class Controller extends Application
           {
             Button newLetterButton = new Button();
             newLetterButton.setId(Dice.getTopLetter() + "");
-            newLetterButton.setGraphic(Dice.getImageView());
+
+            if (egyptianMode)
+            {
+              newLetterButton.setGraphic(Dice.getEgyptianImageView());
+            }
+            else
+            {
+              newLetterButton.setGraphic(Dice.getImageView());
+            }
             newLetterButton.setOnAction(eh);
 
             boardPane.add(newLetterButton, col, row);
@@ -190,13 +213,25 @@ public class Controller extends Application
             }
           }
         }
-        primaryStage.setScene(new Scene(mainGamePane, 1500, 1000));
+        primaryStage.setScene(mainGameScene);
         primaryStage.show();
-        gameTimer newTimer = new gameTimer();
+        newTimer = new gameTimer();
         newTimer.start();
       }
     });
 
+    Button goBackToMainMenu = new Button("Go back to main menu");
+    goBackToMainMenu.setOnAction(new EventHandler<ActionEvent>()
+    {
+      @Override
+      public void handle(ActionEvent event)
+      {
+        primaryStage.setScene(mainMenuScene);
+        primaryStage.show();
+        newTimer.stop();
+        newBoard.randomBoard();
+      }
+    });
 
     /**
      * Local variables creates to contain the GUI elements of the main game board that the user sees while playing the
@@ -226,7 +261,6 @@ public class Controller extends Application
      * just a text and the button is a button.
      */
     HBox timerBox = new HBox();
-    Button goBackToMainMenu = new Button("Go back to main menu");
     Text offsetMenuButton = new Text("                                               ");
     timerBox.getChildren().add(timerText);
     timerText.setFont(Font.font(40));
@@ -256,15 +290,6 @@ public class Controller extends Application
     mainGamePane.setRight(rightNumbersScroll);
     mainGamePane.setLeft(wrongNumbersScroll);
 
-    goBackToMainMenu.setOnAction(new EventHandler<ActionEvent>()
-    {
-      @Override
-      public void handle(ActionEvent event)
-      {
-        primaryStage.setScene(new Scene(mainMenuPane, 400, 500));
-        primaryStage.show();
-      }
-    });
 
     /**
      * The enter word button is clicked after the word is entered into the text field. It calls the findword method on
@@ -330,7 +355,7 @@ public class Controller extends Application
     double conversionFactorFromNanoToSeconds = Math.pow(10, -9);
     double currentTime;
     double startupTime;
-    final private double totalTime = 180;
+    final private double totalTime = 20;
 
     @Override
     public void handle(long now)

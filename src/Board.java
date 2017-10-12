@@ -1,5 +1,4 @@
 import java.util.ArrayList;
-import java.util.Collection;
 import java.util.Collections;
 
 public class Board
@@ -292,6 +291,10 @@ public class Board
     return false;
   }
 
+  void randomBoard()
+  {
+    Collections.shuffle(board);
+  }
   /**
    * A method to return the ArrayList of the board to be used to build the visual.
    * @return

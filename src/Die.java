@@ -41,11 +41,6 @@ public class Die {
         return topLetter;
     }
 
-    String getImageText()
-    {
-        return imageText;
-    }
-
     /**
      * returns an ImageView object of the letter rolled using the imageText variable in the die.
      * @return
@@ -53,6 +48,18 @@ public class Die {
     public ImageView getImageView() {
         System.out.println(imageText);
         Image tileImage = new Image(imageText);
+        ImageView tileImageView = new ImageView();
+        tileImageView.setImage(tileImage);
+        tileImageView.setX(40);
+        tileImageView.setY(40);
+
+        return tileImageView;
+    }
+
+    public ImageView getEgyptianImageView()
+    {
+        System.out.println("Egyptian " + imageTextEgyptian);
+        Image tileImage = new Image(imageTextEgyptian);
         ImageView tileImageView = new ImageView();
         tileImageView.setImage(tileImage);
         tileImageView.setX(40);
