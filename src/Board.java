@@ -6,13 +6,15 @@ public class Board
 {
   private ArrayList<Die> board;
   //direction array for 4x4
-//    private final int directionArray[] = {-5, -4, -3, -1, 1, 3, 4, 5};
+  private final int directionArrayFour[] = {-5, -4, -3, -1, 1, 3, 4, 5};
   //direction array for 5x5
-  private final int directionArray[] = {-6, -5, -4, -1, 1, 4, 5, 6};
+  private final int directionArrayFive[] = {-6, -5, -4, -1, 1, 4, 5, 6};
+  private boolean fourByFour = false;
 
   Board(boolean fourByFourBoolean)
   {
     board = new ArrayList<>();
+    fourByFour = fourByFourBoolean;
 
     if (fourByFourBoolean == true)
     {
@@ -159,10 +161,17 @@ public class Board
       System.out.println("q is " + qInd);
       System.out.println("u is " + uInd);
       int tempInd;
+      int directionArray[];
+      if (fourByFourBoolean)
+      {
+        directionArray = directionArrayFour.clone();
+      } else
+      {
+        directionArray = directionArrayFive.clone();
+      }
       for (int i = 0; i < directionArray.length; i++)
       {
         tempInd = qInd + directionArray[i];
-        System.out.println();
 
         if (tempInd > board.size() - 1 || tempInd < 0)
         {
@@ -182,9 +191,18 @@ public class Board
 
   boolean findWord(String word, int charInd, int boardInd)
   {
+    int directionArray[];
+    if (fourByFour)
+    {
+      directionArray = directionArrayFour.clone();
+    } else
+    {
+      directionArray = directionArrayFive.clone();
+    }
+    System.out.println(word);
     word = word.toUpperCase();
     System.out.println("function called");
-    if (charInd == word.length() - 1)
+    if (charInd == word.length())
     {
       System.out.println("reached end of word\n");
       return true;
@@ -204,18 +222,29 @@ public class Board
     } else if (charInd > 0)
     {
       System.out.println("enterd second letter\n");
+      System.out.println("length of direction array is " + directionArray.length);
       int tempBoardInd;
-      for (int i = 0; i < directionArray.length; i++)
+      for (int i = 0; i < directionArray.length - 1; i++)
       {
         tempBoardInd = boardInd + directionArray[i];
-        if (tempBoardInd > 24 || tempBoardInd < 0)
+        if (tempBoardInd > board.size() - 1 || tempBoardInd < 0)
         {
+          System.out.println("tempBoardInd is " + tempBoardInd);
+          continue;
+        }
+        if (fourByFour == false && (((directionArray[i] == -4 || directionArray[i] == 6) && (boardInd == 4 || boardInd == 9 || boardInd == 14 || boardInd == 19 || boardInd == 24))
+          || (directionArray[i] == -6 && (boardInd == 0 || boardInd == 5 || boardInd == 10 || boardInd == 15 || boardInd == 20))))
+        {
+          System.out.println("continue bec 5x5 edge");
           continue;
         }
         if (word.charAt(charInd) == board.get(tempBoardInd).getTopLetter())
         {
+          System.out.println("original board ind is " + boardInd);
+          System.out.println("Matched Baord index is " + tempBoardInd + " and Letter is " + board.get(tempBoardInd).getTopLetter());
+          System.out.println("charInd is " + charInd + " and letter is " + word.charAt(charInd));
           charInd++;
-          return findWord(word, charInd, tempBoardInd);
+          if (findWord(word, charInd, tempBoardInd)) return true;
         }
       }
     }
