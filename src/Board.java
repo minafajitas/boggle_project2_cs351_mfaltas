@@ -11,6 +11,15 @@ public class Board
   private final int directionArrayFive[] = {-6, -5, -4, -1, 1, 4, 5, 6};
   private boolean fourByFour = false;
 
+  /**
+   * Creates a realistic boggle tray with actual dice objects. Sixteen dice are created for the 4x4 version and 25 dice
+   * objects are created for the 5x5 version. Each dice has 6 faces and the set is obtained from an official boggle set.
+   * After the dice are created, the roll method is called to assign the top letter for each dice and adds all of the
+   * dice to an arraylist.
+   * Special consideration is given to dice with letter U. They are rolled a fixed number times until a U is obtained.
+   * This is so that the chances of a U roll. If there is a U roll, if will be placed next to a Q.
+   * @param fourByFourBoolean
+   */
   Board(boolean fourByFourBoolean)
   {
     board = new ArrayList<>();
@@ -188,7 +197,14 @@ public class Board
     }
   }
 
-
+  /**
+   * This method takes a word from the controller and it recursively calls a character by character searching if these
+   * characters of the word are all connected and are neighbors on the board. It returns true if that's the case.
+   * @param word
+   * @param charInd
+   * @param boardInd
+   * @return
+   */
   boolean findWord(String word, int charInd, int boardInd)
   {
     int directionArray[];
@@ -202,11 +218,20 @@ public class Board
     System.out.println(word);
     word = word.toUpperCase();
     System.out.println("function called");
+
+    /**
+     * checks if all the letters in the word have been looked. If that's the case, it returns true.
+     */
     if (charInd == word.length())
     {
       System.out.println("reached end of word\n");
       return true;
-    } else if (charInd == 0)
+    }
+    /**
+     * Checks if the first letter of the word exists on the board. It calls the next letter of the word recursively to
+     * see if it neighbors the first letter.
+     */
+    else if (charInd == 0)
     {
       System.out.println("enterd first letter\n");
       for (Die dice : board)
@@ -219,7 +244,12 @@ public class Board
           if (findWord(word, charInd, board.indexOf(dice))) return true;
         }
       }
-    } else if (charInd > 0)
+    }
+    /**
+     * Checks if the neighbors of the first letter found on the board are next to that first letter. Calls recursively
+     * to go into the same if statement to look for other neighbors.
+     */
+    else if (charInd > 0)
     {
       System.out.println("enterd second letter\n");
       System.out.println("length of direction array is " + directionArray.length);
@@ -232,10 +262,16 @@ public class Board
           System.out.println("tempBoardInd is " + tempBoardInd);
           continue;
         }
-        if (fourByFour == false && (((directionArray[i] == -4 || directionArray[i] == 6) && (boardInd == 4 || boardInd == 9 || boardInd == 14 || boardInd == 19 || boardInd == 24))
+        if (fourByFour == false && (((directionArray[i] == -4 || directionArray[i] == 6 || directionArray[i] == 1) && (boardInd == 4 || boardInd == 9 || boardInd == 14 || boardInd == 19 || boardInd == 24))
           || (directionArray[i] == -6 && (boardInd == 0 || boardInd == 5 || boardInd == 10 || boardInd == 15 || boardInd == 20))))
         {
           System.out.println("continue bec 5x5 edge");
+          continue;
+        }
+        if (fourByFour == true && (((directionArray[i] == -3 || directionArray[i] == 1) && (boardInd == 3 || boardInd == 7 || boardInd == 11 || boardInd == 15)
+          || ((directionArray[i] == -5 || directionArray[i] == 3) && (boardInd == 0 || boardInd == 4 || boardInd == 8 || boardInd == 12)))))
+        {
+          System.out.println("continue bec 4x4 edge");
           continue;
         }
         if (word.charAt(charInd) == board.get(tempBoardInd).getTopLetter())
@@ -248,9 +284,18 @@ public class Board
         }
       }
     }
+    /**
+     * If all the cases above fail then that letter is not on the board or does not neighbor that first letter of the
+     * word and false is returned.
+     */
+    System.out.println("returning false for charInd " + charInd + " and boardInd " + boardInd);
     return false;
   }
 
+  /**
+   * A method to return the ArrayList of the board to be used to build the visual.
+   * @return
+   */
   ArrayList<Die> getBoard()
   {
     return board;

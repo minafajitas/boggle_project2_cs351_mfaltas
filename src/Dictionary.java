@@ -4,12 +4,18 @@ import java.io.FileReader;
 import java.io.IOException;
 import java.util.ArrayList;
 
+/**
+ *
+ */
 public class Dictionary {
     ArrayList<String> wordList = new ArrayList<String>();
 
     FileReader reader;
     BufferedReader buffReader;
 
+    /**
+     * Constructor to set the dictionary path in assets and create new instance of the reader and buff reader
+     */
     Dictionary() {
         try {
             reader = new FileReader("Assets/OpenEnglishWordList.txt");
@@ -39,6 +45,11 @@ public class Dictionary {
         }
     }
 
+    /**
+     * Called in by other classes to look a word up in a dictionary.
+     * @param word
+     * @return
+     */
     public boolean inDictionary(String word) {
         word = word.toLowerCase();
         return wordList.contains(word);

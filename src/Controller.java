@@ -17,6 +17,7 @@ import javafx.scene.text.Text;
 import javafx.stage.Stage;
 
 import java.awt.*;
+import java.util.ArrayList;
 
 
 public class Controller extends Application
@@ -26,8 +27,13 @@ public class Controller extends Application
     launch(args);
   }
 
+  /**
+   * Initializes global variables to be used in both the controller class and the inner timer class. This includes the
+   * board and the timer text and its elements.
+   */
   Board newBoardFour = new Board(true);
   Board newBoardFive = new Board(false);
+  ArrayList<String> registeredWords = new ArrayList<String>();
 
   private BorderPane mainGamePane = new BorderPane();
   private int score = 0;
@@ -46,6 +52,10 @@ public class Controller extends Application
   @Override
   public void start(Stage primaryStage) throws Exception
   {
+    /**
+     * Initializes a new dictionary, board, and several panes. The Primary stage consists of the main menu and the
+     * drop down menu to select stage and start game button.
+     */
     Dictionary newDictionary = new Dictionary();
 
     //First scene: main menu
@@ -70,36 +80,67 @@ public class Controller extends Application
     boardGroup.getChildren().add(secondBoardGroup);
 
 
+    /**
+     * Creates a new event handler named eh to be used whenever a letter button is called. What it does is put the
+     * letter clicked on a text field so that it could be checked if it is on the board and in the dictionary. It also
+     * handles drawing the line from the center of the button clicked to the next by making use of the event.getSource
+     * to get the position of the click.
+     * Last it also calculates the distance between the buttons and prevents the user from clicking a button that is not
+     * one tile away from the previously clicked button.
+     */
     EventHandler<ActionEvent> eh = new EventHandler<ActionEvent>()
     {
       @Override
       public void handle(ActionEvent event)
       {
+        /**
+         * gets x and y coordinates of button clicked.
+         */
         Button buttonClicked = (Button) (event.getSource());
-
-        buttonClicked.setDisable(true);
-        if (timeRemaining > 0)
-        {
-          wordField.setText(wordField.getCharacters() + "" + buttonClicked.getId());
-        }
-//        System.out.println("goes insdie button handle");
-
         int x = (int) (((Button) (event.getSource())).getLayoutX() + 100);
         int y = (int) (((Button) (event.getSource())).getLayoutY() + 100);
-
         System.out.println("x is " + x + "y is " + y);
+        /**
+         * sets a flag to start drawing a line between the buttons and and calculates the distances. The flag is set to
+         * false when the word is finally entered.
+         * The buttons and the lines are both added to a group so that the lines could appear on top of the buttons
+         * without preventing the buttons from being clicked.
+         * The button clicked is also disabled so that game rules cannot be violated.
+         */
         if (drawLine == true)
         {
-          Line arrow = new Line(lastClicked.getX(), lastClicked.getY(), x, y);
-          secondBoardGroup.getChildren().add(arrow);
+          int xDist = (int) (lastClicked.getX() - x);
+          int yDist = (int) (lastClicked.getY() - y);
+          if (Math.abs(xDist) < 189 && Math.abs(yDist) < 189)
+          {
+            Line arrow = new Line(lastClicked.getX(), lastClicked.getY(), x, y);
+            secondBoardGroup.getChildren().add(arrow);
+            lastClicked.setLocation(x, y);
+            System.out.println("CLose enough");
+            buttonClicked.setDisable(true);
+            if (timeRemaining > 0)
+            {
+              wordField.setText(wordField.getCharacters() + "" + buttonClicked.getId());
+            }
+          }
         } else
         {
           drawLine = true;
+          lastClicked.setLocation(x, y);
+          buttonClicked.setDisable(true);
+          if (timeRemaining > 0)
+          {
+            wordField.setText(wordField.getCharacters() + "" + buttonClicked.getId());
+          }
         }
-        lastClicked.setLocation(x, y);
       }
     };
 
+    /**
+     * The start game sets the flags for the selected game mode. Based on that flag, Buttons are created to with image
+     * Views of the dice selected based on the game mode.
+     * After the board is setup, the scene is changed to show the main game board and hide the main menu.
+     */
     startGame.setOnAction(new EventHandler<ActionEvent>()
     {
       @Override
@@ -151,6 +192,11 @@ public class Controller extends Application
     });
 
 
+    /**
+     * Local variables creates to contain the GUI elements of the main game board that the user sees while playing the
+     * game.
+     */
+
     VBox gameVbox = new VBox();
     HBox gameTextHbox = new HBox();
     HBox topHbox = new HBox();
@@ -191,6 +237,13 @@ public class Controller extends Application
 //    primaryStage.setScene(new Scene(mainGamePane, 1500, 1000));
 //    primaryStage.show();
 
+    /**
+     * The enter word button is clicked after the word is entered into the text field. It calls the findword method on
+     * board class to check if the word is on the board and the calls the dictionary method to check if the word is also
+     * in the dictionary. If both return true and the word has not been previously entered, the word is added to the
+     * right words list, score is updated, and the word is added to the Arraylist of registered words. Otherwise, the
+     * word is added to the VBox containing the wrong words.
+     */
     enterWord.setOnAction(new EventHandler<ActionEvent>()
     {
       @Override
@@ -219,8 +272,9 @@ public class Controller extends Application
         {
           Text newWord = new Text(enteredText);
           newWord.setFont(Font.font(20));
-          if (newBoard.findWord(enteredText, 0, 0) && newDictionary.inDictionary(enteredText))
+          if (newBoard.findWord(enteredText, 0, 0) && newDictionary.inDictionary(enteredText) && !registeredWords.contains(enteredText))
           {
+            registeredWords.add(enteredText);
             rightNumbers.getChildren().add(newWord);
             score += enteredText.length() - 2;
             scoreText.setText("Score: " + score);
@@ -235,13 +289,19 @@ public class Controller extends Application
     });
   }
 
+  /**
+   * Extends the Animation timer class. It registers the start time and subtracts the current time from start time to
+   * obtain the time remaining. The time fields are added to the GUI elements. The text changes color using a modulus
+   * when time remaining is less than 10. When time is zero or less, the game is stopped by disabling all the buttons
+   * and the score is displayed in a new window.
+   */
   class gameTimer extends AnimationTimer
   {
     boolean gameStarted = false;
     double conversionFactorFromNanoToSeconds = Math.pow(10, -9);
     double currentTime;
     double startupTime;
-    final private double totalTime = 20;
+    final private double totalTime = 180;
 
     @Override
     public void handle(long now)
