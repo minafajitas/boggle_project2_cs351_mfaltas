@@ -1,0 +1,9 @@
+<component name="ArtifactManager">
+  <artifact type="jar" name="boggle_project2_cs351_mfaltas:jar">
+    <output-path>$PROJECT_DIR$/out/artifacts/boggle_project2_cs351_mfaltas_jar</output-path>
+    <root id="archive" name="boggle_project2_cs351_mfaltas.jar">
+      <element id="module-output" name="boggle_project2_cs351_mfaltas" />
+      <element id="dir-copy" path="$PROJECT_DIR$/src" />
+    </root>
+  </artifact>
+</component>

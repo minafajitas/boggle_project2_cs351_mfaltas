@@ -35,9 +35,9 @@ public class Controller extends Application
    * Initializes global variables to be used in both the controller class and the inner timer class. This includes the
    * board and the timer text and its elements.
    */
-  Board newBoardFour = new Board(true);
-  Board newBoardFive = new Board(false);
-  ArrayList<String> registeredWords = new ArrayList<String>();
+  private Board newBoardFour = new Board(true);
+  private Board newBoardFive = new Board(false);
+  private ArrayList<String> registeredWords = new ArrayList<>();
 
   private BorderPane mainGamePane = new BorderPane();
   private int score = 0;
@@ -47,13 +47,13 @@ public class Controller extends Application
   private boolean drawLine = false;
   private double timeRemaining;
   //  private GridPane boardPane = new GridPane();
-  Point lastClicked = new Point(0, 0);
-  boolean fourByFourBoolean = true;
-  boolean gameModeSelected = false;
-  boolean egyptianMode = false;
-  gameTimer newTimer;
+  private Point lastClicked = new Point(0, 0);
+  private boolean fourByFourBoolean = true;
+  private boolean gameModeSelected = false;
+  private boolean egyptianMode = false;
+  private gameTimer newTimer;
 
-  Board newBoard;
+  private Board newBoard;
 
   @Override
   public void start(Stage primaryStage) throws Exception
@@ -121,7 +121,7 @@ public class Controller extends Application
          * without preventing the buttons from being clicked.
          * The button clicked is also disabled so that game rules cannot be violated.
          */
-        if (drawLine == true)
+        if (drawLine)
         {
           int xDist = (int) (lastClicked.getX() - x);
           int yDist = (int) (lastClicked.getY() - y);
@@ -220,19 +220,6 @@ public class Controller extends Application
       }
     });
 
-    Button goBackToMainMenu = new Button("Go back to main menu");
-    goBackToMainMenu.setOnAction(new EventHandler<ActionEvent>()
-    {
-      @Override
-      public void handle(ActionEvent event)
-      {
-        primaryStage.setScene(mainMenuScene);
-        primaryStage.show();
-        newTimer.stop();
-        newBoard.randomBoard();
-      }
-    });
-
     /**
      * Local variables creates to contain the GUI elements of the main game board that the user sees while playing the
      * game.
@@ -246,14 +233,40 @@ public class Controller extends Application
     VBox wrongNumbers = new VBox();
     ScrollPane rightNumbersScroll = new ScrollPane();
     ScrollPane wrongNumbersScroll = new ScrollPane();
-    Text rightNumbersText = new Text("Right Numbers: ");
+    Text rightNumbersText = new Text("Valid Words: ");
     rightNumbersText.setFont(Font.font(30));
-    Text wrongNumbersText = new Text("Wrong Numbers: ");
+    Text wrongNumbersText = new Text("Invalid Words: ");
     wrongNumbersText.setFont(Font.font(30));
     rightNumbers.getChildren().add(rightNumbersText);
     wrongNumbers.getChildren().add(wrongNumbersText);
     rightNumbersScroll.setContent(rightNumbers);
     wrongNumbersScroll.setContent(wrongNumbers);
+
+    /**
+     * A button to reset everything and go back to main menu to start a new game.
+     */
+    Button goBackToMainMenu = new Button("Go back to main menu");
+    goBackToMainMenu.setOnAction(new EventHandler<ActionEvent>()
+    {
+      @Override
+      public void handle(ActionEvent event)
+      {
+        primaryStage.setScene(mainMenuScene);
+        primaryStage.show();
+        newTimer.stop();
+        newBoard.randomBoard();
+        secondBoardGroup.getChildren().clear();
+        rightNumbers.getChildren().clear();
+        wrongNumbers.getChildren().clear();
+
+        Text rightNumbersText = new Text("Valid Words: ");
+        rightNumbersText.setFont(Font.font(30));
+        Text wrongNumbersText = new Text("Invalid Words: ");
+        wrongNumbersText.setFont(Font.font(30));
+        rightNumbers.getChildren().add(rightNumbersText);
+        wrongNumbers.getChildren().add(wrongNumbersText);
+      }
+    });
 
     /**
      * creates an Hbox to represent the top panel of the game board. This includes a time, a score
@@ -355,7 +368,7 @@ public class Controller extends Application
     double conversionFactorFromNanoToSeconds = Math.pow(10, -9);
     double currentTime;
     double startupTime;
-    final private double totalTime = 20;
+    final private double totalTime = 180;
 
     @Override
     public void handle(long now)

@@ -7,11 +7,11 @@ import java.util.ArrayList;
 /**
  *
  */
-public class Dictionary {
-    ArrayList<String> wordList = new ArrayList<String>();
+class Dictionary {
+    private ArrayList<String> wordList = new ArrayList<String>();
 
-    FileReader reader;
-    BufferedReader buffReader;
+    private FileReader reader;
+    private BufferedReader buffReader;
 
     /**
      * Constructor to set the dictionary path in assets and create new instance of the reader and buff reader
@@ -50,7 +50,7 @@ public class Dictionary {
      * @param word
      * @return
      */
-    public boolean inDictionary(String word) {
+    boolean inDictionary(String word) {
         word = word.toLowerCase();
         return wordList.contains(word);
     }

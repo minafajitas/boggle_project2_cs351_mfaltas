@@ -1,7 +1,7 @@
 import java.util.ArrayList;
 import java.util.Collections;
 
-public class Board
+class Board
 {
   private ArrayList<Die> board;
   //direction array for 4x4
