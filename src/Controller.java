@@ -3,6 +3,7 @@ import javafx.application.Application;
 import javafx.event.ActionEvent;
 import javafx.event.EventHandler;
 import javafx.geometry.Pos;
+import javafx.geometry.Rectangle2D;
 import javafx.scene.Group;
 import javafx.scene.Scene;
 import javafx.scene.control.Button;
@@ -14,6 +15,7 @@ import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
 import javafx.scene.text.Font;
 import javafx.scene.text.Text;
+import javafx.stage.Screen;
 import javafx.stage.Stage;
 
 import java.awt.*;
@@ -69,6 +71,9 @@ public class Controller extends Application
     mainMenuPane.setCenter(mainMenuBox);
     mainMenuBox.setAlignment(Pos.CENTER);
     primaryStage.setScene(new Scene(mainMenuPane, 400, 500));
+    Rectangle2D primScreenBounds = Screen.getPrimary().getVisualBounds();
+    primaryStage.setX((primScreenBounds.getWidth() - primaryStage.getWidth()) / 2);
+    primaryStage.setY((primScreenBounds.getHeight() - primaryStage.getHeight()) / 2);
     primaryStage.show();
 
 //    System.out.println("four by four is " + fourByFourBoolean);
@@ -186,6 +191,7 @@ public class Controller extends Application
           }
         }
         primaryStage.setScene(new Scene(mainGamePane, 1500, 1000));
+        primaryStage.show();
         gameTimer newTimer = new gameTimer();
         newTimer.start();
       }
@@ -214,14 +220,31 @@ public class Controller extends Application
     rightNumbersScroll.setContent(rightNumbers);
     wrongNumbersScroll.setContent(wrongNumbers);
 
+    /**
+     * creates an Hbox to represent the top panel of the game board. This includes a time, a score
+     * board, and a go back to main menu button. The timer itself is a Text added to an HBox. Score
+     * just a text and the button is a button.
+     */
     HBox timerBox = new HBox();
+    Button goBackToMainMenu = new Button("Go back to main menu");
+    Text offsetMenuButton = new Text("                                               ");
     timerBox.getChildren().add(timerText);
     timerText.setFont(Font.font(40));
     topHbox.getChildren().add(timerBox);
     topHbox.getChildren().add(scoreText);
+    topHbox.getChildren().add(offsetMenuButton);
+    topHbox.getChildren().add(goBackToMainMenu);
+    goBackToMainMenu.setAlignment(Pos.TOP_RIGHT);
     topHbox.setAlignment(Pos.CENTER_LEFT);
     scoreText.setFont(Font.font(60));
     Button enterWord = new Button("enter");
+
+    /**
+     * This sets adds the final outlook of the game board together. The board group containing the
+     * letter buttons and the lines drawn is added onto a VBox. Then the enter word button and its
+     * word field are added onto an HBox. Finally, top panel box and the game box are added to the
+     * final board pane along with the right and left scrolls for right and wrong words.
+     */
     gameVbox.getChildren().add(boardGroup);
     boardPane.setAlignment(Pos.CENTER);
     gameTextHbox.getChildren().addAll(wordField, enterWord);
@@ -233,9 +256,15 @@ public class Controller extends Application
     mainGamePane.setRight(rightNumbersScroll);
     mainGamePane.setLeft(wrongNumbersScroll);
 
-
-//    primaryStage.setScene(new Scene(mainGamePane, 1500, 1000));
-//    primaryStage.show();
+    goBackToMainMenu.setOnAction(new EventHandler<ActionEvent>()
+    {
+      @Override
+      public void handle(ActionEvent event)
+      {
+        primaryStage.setScene(new Scene(mainMenuPane, 400, 500));
+        primaryStage.show();
+      }
+    });
 
     /**
      * The enter word button is clicked after the word is entered into the text field. It calls the findword method on

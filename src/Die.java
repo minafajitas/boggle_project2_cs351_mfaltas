@@ -8,6 +8,7 @@ public class Die {
     private char topLetter;
     private String letters;
     private String imageText;
+    private String imageTextEgyptian;
 
     /**
      * A Die instructor to create realistic dice with several six faces that are represented by a string of characters.
@@ -29,6 +30,7 @@ public class Die {
         int randomInt = rand.nextInt(6) + 0; //(max number) + min number
         this.topLetter = letters.charAt(randomInt);
         this.imageText = "image_" + topLetter + ".jpg";
+        this.imageTextEgyptian = "Egyptian_" + "image_" + topLetter + ".jpg";
     }
 
     /**
