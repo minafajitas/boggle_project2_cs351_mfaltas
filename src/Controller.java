@@ -9,6 +9,8 @@ import javafx.scene.control.Button;
 import javafx.scene.control.ComboBox;
 import javafx.scene.control.ScrollPane;
 import javafx.scene.control.TextField;
+import javafx.scene.image.Image;
+import javafx.scene.image.ImageView;
 import javafx.scene.layout.*;
 import javafx.scene.paint.Color;
 import javafx.scene.shape.Line;
@@ -26,6 +28,9 @@ public class Controller extends Application
     launch(args);
   }
 
+  Board newBoardFour = new Board(true);
+  Board newBoardFive = new Board(false);
+
   private BorderPane mainGamePane = new BorderPane();
   private int score = 0;
   private Text scoreText = new Text("Score: " + score);
@@ -35,7 +40,10 @@ public class Controller extends Application
   private double timeRemaining;
   //  private GridPane boardPane = new GridPane();
   Point lastClicked = new Point(0, 0);
-  boolean fourByFourBoolean = false;
+  boolean fourByFourBoolean = true;
+  boolean gameModeSelected = false;
+
+  Board newBoard;
 
   @Override
   public void start(Stage primaryStage) throws Exception
@@ -46,11 +54,10 @@ public class Controller extends Application
     BorderPane mainMenuPane = new BorderPane();
     VBox mainMenuBox = new VBox();
     Button startGame = new Button("Start Game");
-    Button selectGameMode = new Button("Select Game Mode");
     ComboBox gameMode = new ComboBox();
     gameMode.getItems().addAll("4x4 mode", "5x5 mode");
     gameMode.getSelectionModel().select(0);
-    mainMenuBox.getChildren().addAll(startGame, selectGameMode, gameMode);
+    mainMenuBox.getChildren().addAll(startGame, gameMode);
     mainMenuPane.setCenter(mainMenuBox);
     mainMenuBox.setAlignment(Pos.CENTER);
     primaryStage.setScene(new Scene(mainMenuPane, 400, 500));
@@ -58,7 +65,44 @@ public class Controller extends Application
 
 //    System.out.println("four by four is " + fourByFourBoolean);
 
-    selectGameMode.setOnAction(new EventHandler<ActionEvent>()
+    Group boardGroup = new Group();
+    GridPane boardPane = new GridPane();
+    boardGroup.getChildren().add(boardPane);
+    Group secondBoardGroup = new Group();
+    boardGroup.getChildren().add(secondBoardGroup);
+
+
+    EventHandler<ActionEvent> eh = new EventHandler<ActionEvent>()
+    {
+      @Override
+      public void handle(ActionEvent event)
+      {
+        Button buttonClicked = (Button) (event.getSource());
+
+        buttonClicked.setDisable(true);
+        if (timeRemaining > 0)
+        {
+          wordField.setText(wordField.getCharacters() + "" + buttonClicked.getId());
+        }
+//        System.out.println("goes insdie button handle");
+
+        int x = (int) (((Button) (event.getSource())).getLayoutX() + 100);
+        int y = (int) (((Button) (event.getSource())).getLayoutY() + 100);
+
+        System.out.println("x is " + x + "y is " + y);
+        if (drawLine == true)
+        {
+          Line arrow = new Line(lastClicked.getX(), lastClicked.getY(), x, y);
+          secondBoardGroup.getChildren().add(arrow);
+        } else
+        {
+          drawLine = true;
+        }
+        lastClicked.setLocation(x, y);
+      }
+    };
+
+    startGame.setOnAction(new EventHandler<ActionEvent>()
     {
       @Override
       public void handle(ActionEvent event)
@@ -66,76 +110,48 @@ public class Controller extends Application
         if (gameMode.getValue() == "4x4 mode")
         {
           fourByFourBoolean = true;
-
         } else
         {
           fourByFourBoolean = false;
-          System.out.println("four by four is " + fourByFourBoolean);
         }
-      }
-    });
+        gameModeSelected = true;
 
-    System.out.println("four by four is " + fourByFourBoolean);
-    Board newBoard = new Board(fourByFourBoolean);
+        if (fourByFourBoolean)
+        {
+          newBoard = newBoardFour;
+        } else
+        {
+          newBoard = newBoardFive;
+        }
 
-    startGame.setOnAction(new EventHandler<ActionEvent>()
-    {
-      @Override
-      public void handle(ActionEvent event)
-      {
+        if (gameModeSelected)
+        {
+          int col = 0;
+          int row = 0;
+          for (Die Dice : newBoard.getBoard())
+          {
+            Button newLetterButton = new Button();
+            newLetterButton.setId(Dice.getTopLetter() + "");
+            newLetterButton.setGraphic(Dice.getImageView());
+            newLetterButton.setOnAction(eh);
+
+            boardPane.add(newLetterButton, col, row);
+            if ((fourByFourBoolean == false && col > 3) || (fourByFourBoolean && col > 2))
+            {
+              col = 0;
+              row++;
+            } else
+            {
+              col++;
+            }
+          }
+        }
         primaryStage.setScene(new Scene(mainGamePane, 1500, 1000));
         gameTimer newTimer = new gameTimer();
         newTimer.start();
-
       }
     });
 
-    Group boardGroup = new Group();
-    GridPane boardPane = new GridPane();
-    boardGroup.getChildren().add(boardPane);
-    Group secondBoardGroup = new Group();
-    boardGroup.getChildren().add(secondBoardGroup);
-
-    int col = 0;
-    int row = 0;
-    for (Die Dice : newBoard.getBoard())
-    {
-      Button newLetterButton = new Button();
-      newLetterButton.setGraphic(Dice.getImageView());
-
-      newLetterButton.setOnAction(new EventHandler<ActionEvent>()
-      {
-        @Override
-        public void handle(ActionEvent event)
-        {
-          newLetterButton.setDisable(true);
-          wordField.setText(wordField.getCharacters() + "" + Dice.getTopLetter());
-
-          int x = (int) (((Button) (event.getSource())).getLayoutX() + 100);
-          int y = (int) (((Button) (event.getSource())).getLayoutY() + 100);
-
-          System.out.println("x is " + x + "y is " + y);
-          if (drawLine == true)
-          {
-            Line arrow = new Line(lastClicked.getX(), lastClicked.getY(), x, y);
-            secondBoardGroup.getChildren().add(arrow);
-          } else
-          {
-            drawLine = true;
-          }
-          lastClicked.setLocation(x, y);
-        }
-      });
-      boardPane.add(newLetterButton, col, row);
-      if (col > 3)
-      {
-        col = 0;
-        row++;
-      } else
-      {
-        col++;
-      }
-    }
 
     VBox gameVbox = new VBox();
     HBox gameTextHbox = new HBox();
@@ -173,6 +189,7 @@ public class Controller extends Application
     mainGamePane.setRight(rightNumbersScroll);
     mainGamePane.setLeft(wrongNumbersScroll);
 
+
 //    primaryStage.setScene(new Scene(mainGamePane, 1500, 1000));
 //    primaryStage.show();
 
@@ -181,9 +198,19 @@ public class Controller extends Application
       @Override
       public void handle(ActionEvent event)
       {
+//        if (timeRemaining <= 0)
+//        {
+//          enterWord.setDisable(true);
+//        }
         for (int i = 0; i < boardPane.getChildren().size(); i++)
         {
           boardPane.getChildren().get(i).setDisable(false);
+
+          if (timeRemaining <= 0)
+          {
+            boardPane.getChildren().get(i).setDisable(true);
+            enterWord.setDisable(true);
+          }
         }
         String enteredText;
         enteredText = wordField.getText();
